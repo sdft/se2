@@ -156,13 +156,13 @@ abstract class AbstractMedium implements Medium
     @Override
     public boolean istVormerkenMoeglich(Kunde kunde)
     {
-        // Länge <= 3
+        // Länge >= 3
         if (_vormerker.size() >= 3)
         {
             return false;
         }
 
-        // !_vormerker.contains(kunde)
+        // _vormerker.contains(kunde)
         if (kunde == null || _vormerker.contains(kunde))
         {
             return false;
