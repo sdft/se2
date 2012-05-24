@@ -319,20 +319,12 @@ public class VerleihServiceImpl extends AbstractBeobachtbarerService implements
             {
                 return false;
             }
-
-            else if (istVerliehen(medium))
+            else if (istVerliehen(medium) && kunde.equals(getEntleiherFuer(medium)))
             {
-                if(kunde.equals(getEntleiherFuer(medium))
-                        && medium.istVormerkenMoeglich(kunde))
-                {
                     return false;
-                }
             }
-            else
-            {
-                if(!medium.istVormerkenMoeglich(kunde)){
+            else if(!medium.istVormerkenMoeglich(kunde)){
                     return false;
-                }
             }
            
         }
