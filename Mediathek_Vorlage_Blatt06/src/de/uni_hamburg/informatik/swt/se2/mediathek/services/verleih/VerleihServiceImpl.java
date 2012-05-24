@@ -258,20 +258,22 @@ public class VerleihServiceImpl extends AbstractBeobachtbarerService implements
         assert kundeImBestand(kunde) : "Vorbedingung verletzt: kundeImBestand(kunde)";
         assert mediumImBestand(medium) : "Vorbedingung verletzt: mediumImBestand(medium)";
         assert istVormerkenMoeglich(kunde, medium) : "Vorbedingung verletzt: istVormerkenMoeglich(kunde, medium)";
-        
+
         medium.setVormerker(kunde);
-        
+
         List<Kunde> vormerker = getVormerker(medium);
         assert vormerker.contains(kunde) : "Nachbedingung verletzt: getVormerker(medium).contains(kunde)";
         assert vormerker.size() <= 3 : "Nachbedingung verletzt: vormerker.size() <= 3";
         informiereUeberAenderung();
     }
 
+
+
     @Override
     public List<Kunde> getVormerker(Medium medium)
     {
         assert mediumImBestand(medium) : "Vorbedingung verletzt: mediumImBestand(medium)";
-        
+
         List<Kunde> vormerker = medium.getVormerker();
         return vormerker;
     }
@@ -280,32 +282,8 @@ public class VerleihServiceImpl extends AbstractBeobachtbarerService implements
     public Kunde getErsterVormerker(Medium medium)
     {
         assert mediumImBestand(medium) : "Vorbedingung verletzt: mediumImBestand(medium)";
-        
+
         return medium.getErsterVormerker();
-    }
-
-    @Override
-    public boolean istVormerkenMoeglich(Kunde kunde, Medium medium)
-    {
-        //assert kundeImBestand(kunde) : "Vorbedingung verletzt: kundeImBestand(kunde)";
-        //assert mediumImBestand(medium) : "Vorbedingung verletzt: mediumImBestand(medium)";
-        
-        if (kunde == null || medium == null)
-        {
-            return false;
-        }
-        
-        else if (istVerliehen(medium))
-        {
-            return !kunde.equals(getEntleiherFuer(medium))&& medium.istVormerkenMoeglich(kunde);
-        }
-        else
-        {
-            return medium.istVormerkenMoeglich(kunde);
-        }
-        
-        
-
     }
 
     @Override
@@ -314,11 +292,51 @@ public class VerleihServiceImpl extends AbstractBeobachtbarerService implements
         assert kundeImBestand(kunde) : "Vorbedingung verletzt: kundeImBestand(kunde)";
         assert mediumImBestand(medium) : "Vorbedingung verletzt: mediumImBestand(medium)";
         assert getVormerker(medium).contains(kunde) : "Nachbedingung verletzt: getVormerker(medium).contains(kunde)";
-      
+
         medium.vormerkerLoeschen(kunde);
 
         assert !getVormerker(medium).contains(kunde) : "Nachbedingung verletzt: !getVormerker(medium).contains(kunde)";
         informiereUeberAenderung();
+    }
+    private boolean istVormerkenMoeglich(Kunde kunde, Medium medium)
+    {
+        List<Medium> medien = new ArrayList<Medium>();
+        medien.add(medium);
+        return istVormerkenMoeglich(medien, kunde);
+    }
+
+    @Override
+    public boolean istVormerkenMoeglich(List<Medium> medien, Kunde kunde)
+    {
+        // assert kundeImBestand(kunde) :
+        // "Vorbedingung verletzt: kundeImBestand(kunde)";
+        // assert mediumImBestand(medium) :
+        // "Vorbedingung verletzt: mediumImBestand(medium)";
+        
+        for (Medium medium : medien)
+        {
+            if (kunde == null || medium == null)
+            {
+                return false;
+            }
+
+            else if (istVerliehen(medium))
+            {
+                if(kunde.equals(getEntleiherFuer(medium))
+                        && medium.istVormerkenMoeglich(kunde))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if(!medium.istVormerkenMoeglich(kunde)){
+                    return false;
+                }
+            }
+           
+        }
+        return true;
     }
 
 }

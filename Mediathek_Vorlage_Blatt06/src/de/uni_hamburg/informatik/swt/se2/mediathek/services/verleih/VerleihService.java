@@ -282,14 +282,14 @@ public interface VerleihService extends BeobachtbarerService
     /**
      * prüft, ob der Kunde das Medium vormerken kann.
      * 
-     * @param kunde
+     * @param medien
      *            Kunde
-     * @param medium
+     * @param kunde
      *            Medium
      * @return
      * 
      */
-    boolean istVormerkenMoeglich(Kunde kunde, Medium medium);
+    boolean istVormerkenMoeglich(List<Medium> medien, Kunde kunde);
 
     /**
      * Entfernt den Kunden aus der Vormerkliste des Mediums

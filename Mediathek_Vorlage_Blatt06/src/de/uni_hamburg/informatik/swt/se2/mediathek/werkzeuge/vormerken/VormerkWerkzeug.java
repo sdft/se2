@@ -230,7 +230,7 @@ public class VormerkWerkzeug
         }
         else
         {
-            return _verleihService.istVerleihenMoeglich(medien, kunde);
+            return _verleihService.istVormerkenMoeglich(medien, kunde);
         }
     }
 
