@@ -146,7 +146,6 @@ public interface VerleihService extends BeobachtbarerService
      */
     boolean istVerliehen(Medium medium);
 
-    // TODO Prüfung, ob der Entleiher an erster Stelle der Vormerkliste ist.
 
     /**
      * Prüft ob alle angegebenen Medien nicht verliehen sind.

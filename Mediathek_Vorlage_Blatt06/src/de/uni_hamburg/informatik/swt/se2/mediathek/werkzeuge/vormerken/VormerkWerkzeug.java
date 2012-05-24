@@ -245,7 +245,6 @@ public class VormerkWerkzeug
         List<Medium> selectedMedien = _medienAuflisterWerkzeug
                 .getSelectedMedien();
         Kunde selectedKunde = _kundenAuflisterWerkzeug.getSelectedKunde();
-        // TODO für Aufgabenblatt 6: Vormerken einbauen
         
         for (Medium medium : selectedMedien)
         {  

@@ -103,6 +103,16 @@ public class VerleihServiceImpl extends AbstractBeobachtbarerService implements
         assert kundeImBestand(kunde) : "Vorbedingung verletzt: kundeImBestand(kunde)";
         assert medienImBestand(medien) : "Vorbedingung verletzt: medienImBestand(medien)";
 
+        for (Medium medium : medien)
+        {
+
+            Kunde vormerker = medium.getErsterVormerker();
+
+            if (vormerker != null && !vormerker.equals(kunde))
+            {
+                return false;
+            }
+        }
         return sindAlleNichtVerliehen(medien);
     }
 
@@ -164,6 +174,8 @@ public class VerleihServiceImpl extends AbstractBeobachtbarerService implements
 
         for (Medium medium : medien)
         {
+            medium.vormerkerLoeschen(kunde);
+            
             Verleihkarte verleihkarte = new Verleihkarte(kunde, medium,
                     ausleihDatum);
             _verleihkarten.put(medium, verleihkarte);
@@ -267,8 +279,6 @@ public class VerleihServiceImpl extends AbstractBeobachtbarerService implements
         informiereUeberAenderung();
     }
 
-
-
     @Override
     public List<Kunde> getVormerker(Medium medium)
     {
@@ -298,6 +308,7 @@ public class VerleihServiceImpl extends AbstractBeobachtbarerService implements
         assert !getVormerker(medium).contains(kunde) : "Nachbedingung verletzt: !getVormerker(medium).contains(kunde)";
         informiereUeberAenderung();
     }
+
     private boolean istVormerkenMoeglich(Kunde kunde, Medium medium)
     {
         List<Medium> medien = new ArrayList<Medium>();
@@ -312,21 +323,23 @@ public class VerleihServiceImpl extends AbstractBeobachtbarerService implements
         // "Vorbedingung verletzt: kundeImBestand(kunde)";
         // assert mediumImBestand(medium) :
         // "Vorbedingung verletzt: mediumImBestand(medium)";
-        
+
         for (Medium medium : medien)
         {
             if (kunde == null || medium == null)
             {
                 return false;
             }
-            else if (istVerliehen(medium) && kunde.equals(getEntleiherFuer(medium)))
+            else if (istVerliehen(medium)
+                    && kunde.equals(getEntleiherFuer(medium)))
             {
-                    return false;
+                return false;
             }
-            else if(!medium.istVormerkenMoeglich(kunde)){
-                    return false;
+            else if (!medium.istVormerkenMoeglich(kunde))
+            {
+                return false;
             }
-           
+
         }
         return true;
     }

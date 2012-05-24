@@ -81,9 +81,7 @@ public class VormerkMedienauflisterWerkzeug extends BeobachtbaresSubWerkzeug
         List<VormerkMedienFormatierer> medienFormatierer = new ArrayList<VormerkMedienFormatierer>();
         for (Medium medium : medienListe)
         {
-            // TODO für Aufgabenblatt 6: Die VormerkMedienFormatierer müssen
-            // noch mit einem möglichen Entleiher und möglichen Vormerkern
-            // ausgestattet werden.
+
             List<Kunde> vormerker = _verleihService.getVormerker(medium);
             Kunde entleiher = null;
             Kunde vormerker1 = null;

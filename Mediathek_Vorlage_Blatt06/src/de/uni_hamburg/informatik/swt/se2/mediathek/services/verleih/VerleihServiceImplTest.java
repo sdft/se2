@@ -139,4 +139,8 @@ public class VerleihServiceImplTest
         assertFalse(ereignisse[0]);
     }
 
+    @Test
+    public void testVormerken(){
+        // TODO Vormerktest muss noch geschrieben werden.
+    }
 }
