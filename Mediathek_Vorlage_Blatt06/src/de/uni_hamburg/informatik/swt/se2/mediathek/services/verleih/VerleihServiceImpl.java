@@ -305,7 +305,6 @@ public class VerleihServiceImpl extends AbstractBeobachtbarerService implements
         }
         
         
-        
 
     }
 

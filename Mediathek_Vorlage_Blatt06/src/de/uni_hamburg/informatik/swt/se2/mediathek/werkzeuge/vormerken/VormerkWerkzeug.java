@@ -224,7 +224,7 @@ public class VormerkWerkzeug
         //assert kunde != null: "Vorbedingung verletzt: Kunde ist nicht ausgewählt";
         //assert !medien.isEmpty(): "Vorbedingung verletzt: Keine Medien ausgewählt";
 
-        if (kunde == null || medien == null || medien.isEmpty())
+        if (kunde == null || medien.isEmpty())
         {
             return false;
         }
