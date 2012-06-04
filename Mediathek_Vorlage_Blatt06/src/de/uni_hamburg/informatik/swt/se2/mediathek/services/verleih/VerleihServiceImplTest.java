@@ -161,5 +161,5 @@ public class VerleihServiceImplTest
                 assertEquals(entliehenesMedium.getVormerker(), kunden);
             }
         }
-    }
+    
 }
