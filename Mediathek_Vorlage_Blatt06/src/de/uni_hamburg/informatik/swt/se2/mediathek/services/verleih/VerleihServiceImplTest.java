@@ -139,8 +139,27 @@ public class VerleihServiceImplTest
         assertFalse(ereignisse[0]);
     }
 
-    @Test
-    public void testVormerken(){
-        // TODO Vormerktest muss noch geschrieben werden.
+        @Test
+        public void testVormerken()
+        {
+
+            Kunde kunde1 = _kunde;
+            Medium nichtVerliehenesMedium, entliehenesMedium;
+            nichtVerliehenesMedium = _medienListe.get(0);
+            entliehenesMedium = _medienListe.get(3);
+            List<Kunde> kunden = new ArrayList<Kunde>();
+            kunden.add(kunde1);
+
+            if (nichtVerliehenesMedium.istVormerkenMoeglich(kunde1) == true)
+            {
+                nichtVerliehenesMedium.setVormerker(kunde1);
+                assertEquals(nichtVerliehenesMedium.getVormerker(), kunden);
+            }
+            if (entliehenesMedium.istVormerkenMoeglich(kunde1) == true)
+            {
+                entliehenesMedium.setVormerker(kunde1);
+                assertEquals(entliehenesMedium.getVormerker(), kunden);
+            }
+        }
     }
 }
