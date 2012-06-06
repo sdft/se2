@@ -20,6 +20,13 @@ import de.uni_hamburg.informatik.swt.se2.mediathek.werkzeuge.hauptwerkzeug.Media
  * @author SE2-Team
  * @version SoSe 2012
  */
+
+/**
+ * Ein Test, ob Git funktionier. 
+ * 
+ * @author moritz
+ *
+ */
 public class StartUpMediathek
 {
 
