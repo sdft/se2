@@ -7,6 +7,7 @@ import de.uni_hamburg.informatik.swt.se2.kino.fachwerte.Datum;
 import de.uni_hamburg.informatik.swt.se2.kino.materialien.Kino;
 import de.uni_hamburg.informatik.swt.se2.kino.materialien.Tagesplan;
 import de.uni_hamburg.informatik.swt.se2.kino.materialien.Vorstellung;
+import de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.SubWerkzeugBeobachter;
 import de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.datumswaehler.DatumAuswaehlWerkzeug;
 import de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.platzverkauf.PlatzVerkaufsWerkzeug;
 import de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.vorstellungswaehler.VorstellungAuswaehlWerkzeug;
@@ -19,103 +20,120 @@ import de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.vorstellungswaehler.Vors
  * @author SE2-Team
  * @version SoSe 2012
  */
-public class KassenWerkzeug
+public class KassenWerkzeug implements SubWerkzeugBeobachter
 {
-    // Das Material dieses Werkzeugs
-    private Kino _kino;
+	// Das Material dieses Werkzeugs
+	private final Kino _kino;
 
-    // UI dieses Werkzeugs
-    private KassenWerkzeugUI _ui;
+	// UI dieses Werkzeugs
+	private final KassenWerkzeugUI _ui;
 
-    // Die Subwerkzeuge
-    private PlatzVerkaufsWerkzeug _platzVerkaufsWerkzeug;
-    private DatumAuswaehlWerkzeug _datumAuswaehlWerkzeug;
-    private VorstellungAuswaehlWerkzeug _vorstellungAuswaehlWerkzeug;
+	// Die Subwerkzeuge
+	private final PlatzVerkaufsWerkzeug _platzVerkaufsWerkzeug;
+	private final DatumAuswaehlWerkzeug _datumAuswaehlWerkzeug;
+	private final VorstellungAuswaehlWerkzeug _vorstellungAuswaehlWerkzeug;
 
-    /**
-     * Initialisiert das Kassenwerkzeug.
-     * 
-     * @param kino das Kino, mit dem das Werkzeug arbeitet.
-     * 
-     * @require kino != null
-     */
-    public KassenWerkzeug(Kino kino)
-    {
-        assert kino != null : "Vorbedingung verletzt: kino != null";
+	/**
+	 * Initialisiert das Kassenwerkzeug.
+	 * 
+	 * @param kino
+	 *            das Kino, mit dem das Werkzeug arbeitet.
+	 * 
+	 * @require kino != null
+	 */
+	public KassenWerkzeug(Kino kino)
+	{
+		assert kino != null : "Vorbedingung verletzt: kino != null";
 
-        _kino = kino;
+		_kino = kino;
 
-        // Subwerkzeuge erstellen
-        _platzVerkaufsWerkzeug = new PlatzVerkaufsWerkzeug();
-        _datumAuswaehlWerkzeug = new DatumAuswaehlWerkzeug();
-        _vorstellungAuswaehlWerkzeug = new VorstellungAuswaehlWerkzeug();
+		// Subwerkzeuge erstellen
+		_platzVerkaufsWerkzeug = new PlatzVerkaufsWerkzeug();
+		_datumAuswaehlWerkzeug = new DatumAuswaehlWerkzeug();
+		_datumAuswaehlWerkzeug.registriereBeobachter(this);
+		_vorstellungAuswaehlWerkzeug = new VorstellungAuswaehlWerkzeug();
+		_vorstellungAuswaehlWerkzeug.registriereBeobachter(this);
 
-        // UI erstellen (mit eingebetteten UIs der direkten Subwerkzeuge)
-        _ui = new KassenWerkzeugUI(_platzVerkaufsWerkzeug.getUIPanel(),
-                _datumAuswaehlWerkzeug.getUIPanel(),
-                _vorstellungAuswaehlWerkzeug.getUIPanel());
+		// UI erstellen (mit eingebetteten UIs der direkten Subwerkzeuge)
+		_ui = new KassenWerkzeugUI(_platzVerkaufsWerkzeug.getUIPanel(),
+				_datumAuswaehlWerkzeug.getUIPanel(),
+				_vorstellungAuswaehlWerkzeug.getUIPanel());
 
-        registriereUIAktionen();
-        setzeTagesplanFuerAusgewaehltesDatum();
+		registriereUIAktionen();
+		setzeTagesplanFuerAusgewaehltesDatum();
 
-        _ui.zeigeFenster();
-    }
+		_ui.zeigeFenster();
+	}
 
-    /**
-     * Fügt die Funktionalitat zum Beenden-Button hinzu.
-     */
-    private void registriereUIAktionen()
-    {
-        _ui.getBeendenButton().addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                reagiereAufBeendenButton();
-            }
-        });
-    }
+	/**
+	 * Fügt die Funktionalitat zum Beenden-Button hinzu.
+	 */
+	private void registriereUIAktionen()
+	{
+		_ui.getBeendenButton().addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				reagiereAufBeendenButton();
+			}
+		});
+	}
 
-    /**
-     * Setzt den in diesem Werkzeug angezeigten Tagesplan basierend auf dem
-     * derzeit im DatumsAuswahlWerkzeug ausgewählten Datum.
-     */
-    private void setzeTagesplanFuerAusgewaehltesDatum()
-    {
-        Tagesplan tagesplan = _kino.getTagesplan(getAusgewaehltesDatum());
-        _vorstellungAuswaehlWerkzeug.setTagesplan(tagesplan);
-    }
+	/**
+	 * Setzt den in diesem Werkzeug angezeigten Tagesplan basierend auf dem
+	 * derzeit im DatumsAuswahlWerkzeug ausgewählten Datum.
+	 */
+	private void setzeTagesplanFuerAusgewaehltesDatum()
+	{
+		Tagesplan tagesplan = _kino.getTagesplan(getAusgewaehltesDatum());
+		_vorstellungAuswaehlWerkzeug.setTagesplan(tagesplan);
+	}
 
-    /**
-     * Passt die Anzeige an, wenn eine andere Vorstellung gewählt wurde.
-     */
-    private void reagiereAufNeueVorstellungsWahl()
-    {
-        _platzVerkaufsWerkzeug.setVorstellung(getAusgewaehlteVorstellung());
-    }
+	/**
+	 * Passt die Anzeige an, wenn eine andere Vorstellung gewählt wurde.
+	 */
+	private void reagiereAufNeueVorstellungsWahl()
+	{
+		_platzVerkaufsWerkzeug.setVorstellung(getAusgewaehlteVorstellung());
+	}
 
-    /**
-     * Beendet die Anwendung.
-     */
-    private void reagiereAufBeendenButton()
-    {
-        _ui.schliesseFenster();
-    }
+	/**
+	 * Beendet die Anwendung.
+	 */
+	private void reagiereAufBeendenButton()
+	{
+		_ui.schliesseFenster();
+	}
 
-    /**
-     * Gibt das derzeit gewählte Datum zurück.
-     */
-    private Datum getAusgewaehltesDatum()
-    {
-        return _datumAuswaehlWerkzeug.getSelektiertesDatum();
-    }
+	/**
+	 * Gibt das derzeit gewählte Datum zurück.
+	 */
+	private Datum getAusgewaehltesDatum()
+	{
+		return _datumAuswaehlWerkzeug.getSelektiertesDatum();
+	}
 
-    /**
-     * Gibt die derzeit ausgewaehlte Vorstellung zurück. Wenn keine Vorstellung
-     * ausgewählt ist, wird <code>null</code> zurückgegeben.
-     */
-    private Vorstellung getAusgewaehlteVorstellung()
-    {
-        return _vorstellungAuswaehlWerkzeug.getAusgewaehlteVorstellung();
-    }
+	/**
+	 * Gibt die derzeit ausgewaehlte Vorstellung zurück. Wenn keine Vorstellung
+	 * ausgewählt ist, wird <code>null</code> zurückgegeben.
+	 */
+	private Vorstellung getAusgewaehlteVorstellung()
+	{
+		return _vorstellungAuswaehlWerkzeug.getAusgewaehlteVorstellung();
+	}
+
+	@Override
+	public void informiereUeberAenderung(Object beobachtbar)
+	{
+		if (beobachtbar instanceof DatumAuswaehlWerkzeug)
+		{
+			setzeTagesplanFuerAusgewaehltesDatum();
+		}
+		else if (beobachtbar instanceof VorstellungAuswaehlWerkzeug)
+		{
+			reagiereAufNeueVorstellungsWahl();
+		}
+
+	}
 }
